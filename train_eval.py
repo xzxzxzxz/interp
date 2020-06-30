@@ -92,6 +92,8 @@ def load_carla_env(
   display_route=True,
   pixor_size=64,
   pixor=False,
+  graph=True,
+  graph_size=8,
   obs_channels=None,
   action_repeat=1):
   """Loads train and eval environments."""
@@ -121,6 +123,8 @@ def load_carla_env(
     'display_route': display_route,  # whether to render the desired route
     'pixor_size': pixor_size,  # size of the pixor labels
     'pixor': pixor,  # whether to output PIXOR observation
+    'graph': graph,
+    'graph_size': graph_size,
   }
 
   gym_spec = gym.spec(env_name)
@@ -182,6 +186,11 @@ def compute_summaries(metrics,
         images.append([])
         latents.append([])
       images[-1].append(next_time_step.observation)
+      import time
+      from PIL import Image
+      filename = "./data/" + str(time.time()) + ".jpeg"
+      im = Image.fromarray(np.array(next_time_step.observation['lidar']).squeeze())
+      im.save(filename)
       latents[-1].append(policy_state[1])
 
     if traj.is_last():
